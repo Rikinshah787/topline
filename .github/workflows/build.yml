@@ -1,0 +1,22 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build universal app
+        run: ./build.sh
+      - name: Check architectures
+        run: lipo -archs Topline.app/Contents/MacOS/Topline
+      - name: Package
+        run: ditto -c -k --keepParent Topline.app Topline.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Topline
+          path: Topline.zip
